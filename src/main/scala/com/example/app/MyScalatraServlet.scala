@@ -22,14 +22,13 @@ class MyScalatraServlet extends ScalatraServlet{
   case class Flower(slug: String, name: String)
   protected implicit lazy val jsonFormats: Formats = DefaultFormats
   var map=HashMap[String, String]() //id,answer
-
-
-
-  def generateAnswer(): String ={
-    val choice = "roygbp"
+  val colorChoice = "roygbp"
+  val numbersChoice = "0123456789"
+  val dbMap = HashMap[String, String]()
+  def generator(choice:String, lenght:Int): String ={
     var temp = ""
-    for (a <- 1 to 4){
-      val r = scala.util.Random.nextInt(6)
+    for (a <- 1 to lenght){
+      val r = scala.util.Random.nextInt(choice.length)
       temp+= choice.charAt(r)
     }
     temp
@@ -57,12 +56,16 @@ class MyScalatraServlet extends ScalatraServlet{
 
     ("white" -> math.abs(totWhite-totRed).toString) ~ ("red" -> totRed.toString)
   }
+  get("/login/:id"){
+    val name = params("id")
+    dbMap(name) = generator(numbersChoice, 4)
+  }
   get("/ans/:id"){
     val id = params("id")
     val guess = params("guess")
     contentType = "application/json"
-    val js = (checkGuess(map.getOrElseUpdate(id, generateAnswer()),guess))
-    println(map.get(id))
+    val js = (checkGuess(map.getOrElseUpdate(dbMap(id), generator(colorChoice, 4)),guess))
+    println(map.get(dbMap(id)))
     compact(render(js))
   }
 
