@@ -16,10 +16,16 @@ import scala.util.control.Breaks._
 import org.json4s.{DefaultFormats, Formats}
 import scala.collection.mutable.{Map,
   SynchronizedMap, HashMap}
+import org.scalatra.CorsSupport
 
-class MyScalatraServlet extends ScalatraServlet{
+class MyScalatraServlet extends ScalatraServlet with CorsSupport {
 
-  case class Flower(slug: String, name: String)
+  options("/*") {
+    response.setHeader(
+      "Access-Control-Allow-Headers", request.getHeader("Access-Control-Request-Headers")
+    )
+
+  }
   protected implicit lazy val jsonFormats: Formats = DefaultFormats
   var map=HashMap[String, String]() //id,answer
   val colorChoice = "roygbp"
@@ -57,8 +63,11 @@ class MyScalatraServlet extends ScalatraServlet{
     ("white" -> math.abs(totWhite-totRed).toString) ~ ("red" -> totRed.toString)
   }
   get("/login/:id"){
+
     val name = params("id")
+    println(name)
     dbMap(name) = generator(numbersChoice, 4)
+    dbMap.get(name)
   }
   get("/ans/:id"){
     val id = params("id")
