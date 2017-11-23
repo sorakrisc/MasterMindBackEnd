@@ -7,4 +7,5 @@ class ScalatraBootstrap extends LifeCycle {
     context.mount(new MyScalatraServlet, "/*")
     context.initParameters("org.scalatra.cors.allowedOrigins") = "http://localhost:3000"
   }
+
 }
