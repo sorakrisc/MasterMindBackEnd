@@ -1,23 +1,10 @@
 package com.example.app
 
-import java.util.Date
-
 import org.scalatra._
-import org.json4s.{DefaultFormats, Formats}
-import org.scalatra.json.JacksonJsonSupport
 import org.json4s.jackson.JsonMethods._
-import org.json4s._
 import org.json4s.JsonDSL._
-
-import scala.collection.mutable.ListBuffer
-
-import scala.util.control.Breaks._
-
-// JSON-related libraries
-import org.json4s.{DefaultFormats, Formats}
-import scala.collection.mutable.HashMap
 import org.scalatra.CorsSupport
-import com.example.app.GameLogic
+
 class MyScalatraServlet extends ScalatraServlet with CorsSupport {
 
   options("/*") {
@@ -25,14 +12,31 @@ class MyScalatraServlet extends ScalatraServlet with CorsSupport {
       "Access-Control-Allow-Headers", request.getHeader("Access-Control-Request-Headers")
     )
   }
-  
-  get("/login/:id"){
+
+  post("/join/:lobid/:id") {
 
     val name = params("id")
-    println(name)
-    GameLogic.dbMap(name) = GameLogic.generateUserID()
-    val js = ("userID" ->GameLogic.dbMap.get(name))
-    compact(render(js))
+    val lobid = params("lobid")
+
+    if (GameLogic.lobbies.get(lobid) == None){
+
+      val js = ("lobStatus"-> "invalid")
+      compact(render(js))
+    }
+    else {
+      GameLogic.dbMap(name) = GameLogic.generateUserID()
+      println(name, GameLogic.dbMap(name))
+      GameLogic.updateLobbies(name,lobid)
+      println(GameLogic.lobbies(lobid))
+      val js = ("lobStatus"-> "valid")
+      compact(render(js))
+    }
+  }
+  post("/create/:inilobid/:name"){
+    val inilobid = params("inilobid")
+    val name = params("name")
+    GameLogic.lobbies(inilobid) = List(GameLogic.dbMap(name)) //update lobbies map [lobbyid, list(userid)]
+    println(inilobid, GameLogic.lobbies)
   }
   get("/ans/:name"){
     val name = params("name")

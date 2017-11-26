@@ -13,7 +13,11 @@ object GameLogic {
   val colorChoice = "roygbp"
   val numbersChoice = "0123456789"
   val dbMap = HashMap[String, String]()
-
+  val lobbies = HashMap[String, List[String]]()
+  lobbies("catnap") = List("1234")
+  def updateLobbies(name:String, lobbyID:String)={
+    lobbies(lobbyID) = dbMap(name)::lobbies(lobbyID)
+  }
   def generateUserID()={
     generator(numbersChoice ,4)
   }
@@ -26,6 +30,7 @@ object GameLogic {
     val random: Seq[Char] = (1 to length).map { _ => choice.charAt(Random.nextInt(numChoices))}
     random.mkString
   }
+
 
   def checkGuess(ans:String, guess:String): JObject ={
     var totWhite = 0
