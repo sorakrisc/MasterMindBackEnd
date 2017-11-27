@@ -22,6 +22,7 @@ object GameLogic {
   val nameUIDMap = HashMap[String, String]()
   val userNumTriesMap = HashMap[String, Int]()
   val uidTimeElapsed = HashMap[String, Int]()
+  val lobbyIDWinnerMap = HashMap[String, List[String]]()
   lobbies("catnap") = List("1234")
   uidNameMap("1234") = "Jamess"
   lobidAnsMap("catnap") = "royg"
