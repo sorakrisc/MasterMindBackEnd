@@ -3,20 +3,40 @@ package com.example.app
 import org.json4s.{DefaultFormats, Formats, JObject}
 import org.json4s._
 import org.json4s.JsonDSL._
+
+import scala.collection.mutable
 import scala.collection.mutable.{HashMap, ListBuffer}
 import scala.util.control.Breaks.{break, breakable}
 
 object GameLogic {
 
   protected implicit lazy val jsonFormats: Formats = DefaultFormats
-  var map=HashMap[String, String]() //id,answer
+//  var map=HashMap[String, String]() //id,answer
   val colorChoice = "roygbp"
   val numbersChoice = "0123456789"
-  val dbMap = HashMap[String, String]()
+  val nameUIDMap = HashMap[String, String]()
+  val uidNameMap = HashMap[String, String]()
+  val lobidAnsMap = HashMap[String, String]()
   val lobbies = HashMap[String, List[String]]()
+  val lobbiesStatus= HashMap[String, String]()
   lobbies("catnap") = List("1234")
-  def updateLobbies(name:String, lobbyID:String)={
-    lobbies(lobbyID) = dbMap(name)::lobbies(lobbyID)
+  uidNameMap("1234") = "Jamess"
+  lobidAnsMap("catnap") = "royg"
+  lobbiesStatus("catnap")= "Waiting"
+
+
+
+  def updateLobbies(userID:String, lobbyID:String)={
+    lobbies(lobbyID) = userID::lobbies(lobbyID)
+  }
+  def createNewUser(name: String): String={
+    var generatedID = generateUserID()
+    while(uidNameMap.get(generatedID).isDefined){
+      generatedID = generateUserID()
+    }
+    uidNameMap(generatedID) = name
+    println(uidNameMap(generatedID)+": "+name)
+    generatedID
   }
   def generateUserID()={
     generator(numbersChoice ,4)
@@ -32,7 +52,8 @@ object GameLogic {
   }
 
 
-  def checkGuess(ans:String, guess:String): JObject ={
+  def checkGuess(lobbyID:String, guess:String): JObject ={
+    val ans = lobidAnsMap.getOrElseUpdate(lobbyID, generateAns())
     var totWhite = 0
     var totRed = 0
     var copguess = guess.to[ListBuffer]
