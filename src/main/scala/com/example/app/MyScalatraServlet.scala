@@ -37,10 +37,16 @@ class MyScalatraServlet extends ScalatraServlet with CorsSupport {
   post("/create/:inilobid/:name"){
     val inilobid = params("inilobid")
     val name = params("name")
-    val generatedID = GameLogic.createNewUser(name)
-    GameLogic.lobbies(inilobid) = List(generatedID) //update lobbies map [lobbyid, list(userid)]
-    GameLogic.lobbiesStatus(inilobid)="Waiting"
-    println(inilobid, GameLogic.lobbies)
+    if(GameLogic.nameUIDMap.get(name).isDefined){
+      compact(render("nameStatus"->"invalid"))
+    }
+    else {
+      val generatedID = GameLogic.createNewUser(name)
+      GameLogic.lobbies(inilobid) = List(generatedID) //update lobbies map [lobbyid, list(userid)]
+      GameLogic.lobbiesStatus(inilobid) = "Waiting"
+      println(inilobid, GameLogic.lobbies)
+      compact(render("nameStatus" -> "valid"))
+    }
   }
 
   post("/gamestatusStart/:lobid"){
@@ -48,6 +54,13 @@ class MyScalatraServlet extends ScalatraServlet with CorsSupport {
     GameLogic.lobbiesStatus(lobid) = "Started"
 
   }
+  post("/myTimeElapsed/:name/:timeElapsed"){
+    val name = params("name")
+    val timeElapsed = params("timeElapsed")
+    GameLogic.updateTimeUsed(name, timeElapsed.toInt)
+
+  }
+  //TODO: .tostring?
   get("/isLobIDEmpty/:lobid"){
     println("HI")
     val lobid = params("lobid")
@@ -59,17 +72,26 @@ class MyScalatraServlet extends ScalatraServlet with CorsSupport {
     val lobid = params("lobid")
     compact(render("gameStatus"->GameLogic.lobbiesStatus(lobid)))
   }
+
   get("/players/:lobid"){
     val lobid = params("lobid")
     val js = ("playerLst"->GameLogic.lobbies(lobid).map(userID =>GameLogic.uidNameMap(userID)))
     compact(render(js))
   }
-
+  get("/isUserInTimeMap/:name"){
+    val name = params("name")
+    val js = ("timeElapsed"->GameLogic.uidTimeElapsed.getOrElseUpdate(GameLogic.nameUIDMap(name), 0))
+    compact(render(js))
+  }
   get("/ans/:lobbyID"){
     val lobbyID = params("lobbyID")
     val guess = params("guess")
+    val name = params("name")
+    val timeElapsed = params("timeElapsed")
+    GameLogic.updateTimeUsed(name, timeElapsed.toInt)
+    println(timeElapsed)
     contentType = "application/json"
-    val js = GameLogic.checkGuess(lobbyID,guess)
+    val js = GameLogic.checkGuess(lobbyID,guess,name)
     compact(render(js))
   }
 

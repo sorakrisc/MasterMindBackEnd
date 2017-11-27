@@ -14,18 +14,34 @@ object GameLogic {
 //  var map=HashMap[String, String]() //id,answer
   val colorChoice = "roygbp"
   val numbersChoice = "0123456789"
-  val nameUIDMap = HashMap[String, String]()
+
   val uidNameMap = HashMap[String, String]()
   val lobidAnsMap = HashMap[String, String]()
   val lobbies = HashMap[String, List[String]]()
   val lobbiesStatus= HashMap[String, String]()
+  val nameUIDMap = HashMap[String, String]()
+  val userNumTriesMap = HashMap[String, Int]()
+  val uidTimeElapsed = HashMap[String, Int]()
   lobbies("catnap") = List("1234")
   uidNameMap("1234") = "Jamess"
   lobidAnsMap("catnap") = "royg"
   lobbiesStatus("catnap")= "Waiting"
+  nameUIDMap("Jamess")="1234"
 
 
+  def updateTimeUsed(name: String, timeUsed: Int)={
+    val uid = nameUIDMap(name)
+    if(uidTimeElapsed.get(uid).isEmpty){
+      uidTimeElapsed(uid)=timeUsed
+    }
+    else if (uidTimeElapsed(uid) < timeUsed){
+      uidTimeElapsed(uid) = timeUsed
+    }
+    else{
+      uidTimeElapsed(uid) = uidTimeElapsed(uid)+timeUsed
+    }
 
+  }
   def updateLobbies(userID:String, lobbyID:String)={
     lobbies(lobbyID) = userID::lobbies(lobbyID)
   }
@@ -35,7 +51,10 @@ object GameLogic {
       generatedID = generateUserID()
     }
     uidNameMap(generatedID) = name
+    nameUIDMap(name)=generatedID
+    userNumTriesMap(generatedID)= 0
     println(uidNameMap(generatedID)+": "+name)
+
     generatedID
   }
   def generateUserID()={
@@ -52,7 +71,10 @@ object GameLogic {
   }
 
 
-  def checkGuess(lobbyID:String, guess:String): JObject ={
+  def checkGuess(lobbyID:String, guess:String, name:String): JObject ={
+    val uid =nameUIDMap(name)
+    val checkCount =userNumTriesMap(uid)+1
+    userNumTriesMap(uid)=checkCount
     val ans = lobidAnsMap.getOrElseUpdate(lobbyID, generateAns())
     var totWhite = 0
     var totRed = 0
@@ -73,6 +95,6 @@ object GameLogic {
         }
       }
     }
-    ("white" -> math.abs(totWhite-totRed).toString) ~ ("red" -> totRed.toString)
+    ("white" -> math.abs(totWhite-totRed).toString) ~ ("red" -> totRed.toString) ~ ("checkCount"->checkCount.toString)
   }
 }
