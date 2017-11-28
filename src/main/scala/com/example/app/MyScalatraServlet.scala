@@ -61,12 +61,14 @@ class MyScalatraServlet extends ScalatraServlet with CorsSupport {
     GameLogic.updateTimeUsed(name, timeElapsed.toInt)
 
   }
+
   post("/updateWinner/:lobid/:name/:timeElapsed"){
     val lobid = params("lobid")
     val name = params("name")
     val timeElapsed = params("timeElapsed")
-    GameLogic.lobbyIDWinnerMap(lobid)=(name+", time used: "+timeElapsed)::GameLogic.lobbyIDWinnerMap(lobid)
-    println("updatewinner")
+    val id = GameLogic.nameUIDMap(name)
+    val numGuess = GameLogic.userNumTriesMap(id)
+    GameLogic.lobbyIDWinnerMap(lobid)=(name+", time used: "+timeElapsed+", number of guess: "+numGuess)::GameLogic.lobbyIDWinnerMap(lobid)
   }
   get("/winnerLst/:lobid"){
     val lobid = params("lobid")
@@ -75,9 +77,7 @@ class MyScalatraServlet extends ScalatraServlet with CorsSupport {
   }
 
   get("/isLobIDEmpty/:lobid"){
-    println("HI")
     val lobid = params("lobid")
-    println("HI")
     val js ="isLobIDEmpty"-> GameLogic.lobbies.get(lobid).isEmpty.toString
     compact(render(js))
   }
