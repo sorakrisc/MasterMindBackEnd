@@ -19,3 +19,20 @@ $ sbt
 
 ```
 
+## Project Structure ##
+
+```
+|-project                                   # All the plugins and builds
+|  |-build.properties
+|  |-plugins.sbt
+|-src                                       # Code here
+|  |-main
+|  |  |-scala
+|  |  |  |-com.example.app
+|  |  |  |  |-GameLogic.scala               # All the logical function
+|  |  |  |  |-MyScalatraServlet.scala       # Gets and Posts
+|  |  |  |-JettyLauncher.scala
+|  |  |  |-ScalatraBootstrap.scala
+|-build.sbt                                 # All the dependencies and builds
+
+```
