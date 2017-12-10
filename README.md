@@ -1,5 +1,7 @@
 # MasterMind Backend #
 
+A scalatra backend for webapp, mastermind game. The project was build for OPL class
+
 ### Prerequisites
 
 * sbt
