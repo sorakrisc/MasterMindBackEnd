@@ -11,7 +11,6 @@ import scala.util.control.Breaks.{break, breakable}
 object GameLogic {
 
   protected implicit lazy val jsonFormats: Formats = DefaultFormats
-//  var map=HashMap[String, String]() //id,answer
   val colorChoice = "roygbp"
   val numbersChoice = "0123456789"
 
@@ -54,8 +53,6 @@ object GameLogic {
     uidNameMap(generatedID) = name
     nameUIDMap(name)=generatedID
     userNumTriesMap(generatedID)= 0
-    println(uidNameMap(generatedID)+": "+name)
-
     generatedID
   }
   def generateUserID()={
@@ -80,9 +77,6 @@ object GameLogic {
     var totWhite = 0
     var totRed = 0
     var copguess = guess.to[ListBuffer]
-    //    for(i <- 0 until ans.length){
-    //      if(ans.charAt(i).equals(guess.charAt(i))) totRed+=1
-    //    }
     totRed = ans.zip(guess).count { case (a, g) => a == g }
     for(i<- 0 until ans.length){
       val ansc = ans.charAt(i)

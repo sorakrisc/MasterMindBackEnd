@@ -45,7 +45,6 @@ class MyScalatraServlet extends ScalatraServlet with CorsSupport {
       GameLogic.lobbies(inilobid) = List(generatedID) //update lobbies map [lobbyid, list(userid)]
       GameLogic.lobbiesStatus(inilobid) = "Waiting"
       GameLogic.lobbyIDWinnerMap(inilobid) = Nil
-      println(inilobid, GameLogic.lobbies)
       compact(render("nameStatus" -> "valid"))
     }
   }
@@ -102,7 +101,6 @@ class MyScalatraServlet extends ScalatraServlet with CorsSupport {
     val name = params("name")
     val timeElapsed = params("timeElapsed")
     GameLogic.updateTimeUsed(name, timeElapsed.toInt)
-    println(timeElapsed)
     contentType = "application/json"
     val js = GameLogic.checkGuess(lobbyID,guess,name)
     compact(render(js))
