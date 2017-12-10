@@ -36,3 +36,7 @@ $ sbt
 |-build.sbt                                 # All the dependencies and builds
 
 ```
+
+By Kanokporn Pringpayong and Sorakris Chaladlamsakul
+
+Enjoy
